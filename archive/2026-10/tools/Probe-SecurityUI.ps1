@@ -1,4 +1,4 @@
-$ProgressPreference = 'SilentlyContinue'
+﻿$ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'Continue'
 $log = 'C:\Users\victo\ERAZER_remote_control\local-cleanup-log.txt'
 function L([string]$t) {

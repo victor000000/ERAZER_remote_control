@@ -1,4 +1,4 @@
-# Local PC cleanup - conservative, reversible. No software is uninstalled.
+﻿# Local PC cleanup - conservative, reversible. No software is uninstalled.
 # Revert notes:
 #   Recall policy: delete HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsAI
 #   Services: Set-Service DiagTrack -StartupType Automatic ; Set-Service MapsBroker -StartupType Automatic

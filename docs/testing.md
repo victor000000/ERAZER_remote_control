@@ -19,6 +19,7 @@ is offline and fails clearly if the pinned dependencies are absent.
 
 ## What is checked
 
+- Tracked Python helpers are syntax-checked without importing or running them.
 - All repository PowerShell scripts/data files are parsed under the selected
   engine, including archived files. Parsing never executes the archive.
 - Maintained code receives safety lint for automatic-variable assignment and
@@ -72,3 +73,22 @@ to check prose.
 Keep these outside default CI. Use the [safe operations runbook](safe-operations.md)
 and [deployment migration](deployment-migration.md); never run an archived
 `Test-*` script merely because its filename resembles a unit test.
+
+## Continuous delivery boundary
+
+This repository has no automatic deployment workflow or hosted deployment target.
+CI validates source and publishes test diagnostics only; it does not deploy to
+ERAZER, modify scheduled tasks, change network settings, or start SQX. Deployment
+remains a separate, deliberate operation under the deployment runbook. A green
+CI run does not certify live hardware, credentials, licensing, or service health.
+
+Local checks require Git on the test process PATH as well as the selected
+PowerShell executable. A portable Git copy can be added to that process PATH
+without changing machine or user settings. Pinned modules stay under ignored
+`out/dependencies/`; the checks do not install global modules.
+
+PowerShell files containing non-ASCII text use UTF-8 with a BOM so Windows
+PowerShell 5.1 parses them consistently on different Windows code pages. Keep
+this marker when editing those files. If a WSL-launched Windows test process
+cannot resolve `git` despite a valid PATH, verify that its `PATHEXT` includes
+`.EXE`; repair only that test process environment before rerunning.

@@ -1,4 +1,4 @@
-$ProgressPreference = 'SilentlyContinue'
+﻿$ProgressPreference = 'SilentlyContinue'
 $ErrorActionPreference = 'Continue'
 function W([string]$t) { Write-Output $t }
 

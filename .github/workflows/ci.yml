@@ -19,9 +19,23 @@ jobs:
         shell: [powershell, pwsh]
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      - name: Parse Python helpers without running operations
+        shell: pwsh
+        run: |
+          @'
+          import pathlib
+          import subprocess
+          files = subprocess.check_output(["git", "ls-files", "-z", "--", "*.py"]).decode().split("\0")
+          files = [name for name in files if name]
+          for name in files:
+              compile(pathlib.Path(name).read_bytes(), name, "exec")
+          print(f"Python syntax passed: {len(files)} files")
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       # Saving with pwsh avoids Windows PS 5.1's first-use NuGet provider
       # bootstrap. Both matrix jobs still execute every check in their own shell.
@@ -44,7 +58,7 @@ jobs:
 
       - name: Upload NUnit, coverage and check diagnostics
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: test-results-${{ matrix.shell }}
           path: out/test-results/${{ matrix.shell }}/
