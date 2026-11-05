@@ -30,8 +30,15 @@ jobs:
         run: ./build/Install-TestDependencies.ps1
         timeout-minutes: 10
 
-      - name: Parse, safety lint and offline unit tests
-        shell: ${{ matrix.shell }}
+      - name: Parse, safety lint and offline unit tests (Windows PowerShell)
+        if: matrix.shell == 'powershell'
+        shell: powershell
+        run: ./build/Invoke-Checks.ps1
+        timeout-minutes: 15
+
+      - name: Parse, safety lint and offline unit tests (PowerShell 7)
+        if: matrix.shell == 'pwsh'
+        shell: pwsh
         run: ./build/Invoke-Checks.ps1
         timeout-minutes: 15
 
