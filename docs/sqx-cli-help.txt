@@ -1,0 +1,248 @@
+﻿Usage: 
+sqcli.exe
+sqcli.exe license=xxxx
+sqcli.exe -command [options]
+-------------------------------------------
+-project Manage projects.
+-------------------------------------------
+Arguments:
+	action: Performs the specific action [list,start,startOnlyTask,startFromTask,stop,pause,resume,remove,status,loadconfig,saveconfig]
+	name: (optional) Project name
+	file: (optional) Path of the config file
+	task: (optional) Task number, indexed from 1
+Example:
+	sqcli.exe -project action=list
+	sqcli.exe -project action=start name=Builder
+	sqcli.exe -project action=startOnlyTask name="Example custom project" task=2
+	sqcli.exe -project action=startFromTask name="Example custom project" task=2
+	sqcli.exe -project action=stop name=Builder
+	sqcli.exe -project action=pause name=Builder
+	sqcli.exe -project action=resume name=Builder
+	sqcli.exe -project action=remove name=Custom
+	sqcli.exe -project action=status name=Builder
+	sqcli.exe -project action=loadconfig name=Builder file=Builder.cfx
+	sqcli.exe -project action=saveconfig name=Builder file=Builder.cfx
+-------------------------------------------
+-databank Manage databanks.
+-------------------------------------------
+Arguments:
+	action: Performs the specific action [list,count,save,load,delete,clear,create,remove,synctofiles,syncfromfiles,copy,move,export]
+	project: Project name
+	name: (optional) Databank name
+	position: (optional) Position of databank
+	folder: (optional) Path of the folder
+	destproject: (optional) Destination project
+	destdatabank: (optional) Destination databank
+	file: (optional) Path of the file to export databank contents
+	view: (optional) View name
+	strategies: (optional) Strategies splitted with a semicolumn
+Example:
+	sqcli.exe -databank action=list project=Builder
+	sqcli.exe -databank action=count project=Builder name=Results
+	sqcli.exe -databank action=save project=Builder name=Results folder=test
+	sqcli.exe -databank action=save project=Builder name=Results folder=test strategies="Strategy 0.1487,Strategy 0.1488"
+	sqcli.exe -databank action=load project=Builder name=Results folder=test
+	sqcli.exe -databank action=load project=Builder name=Results folder=test strategies="Strategy 0.1487,Strategy 0.1488"
+	sqcli.exe -databank action=delete project=Builder name=Results strategies="Strategy 0.1487,Strategy 0.1488"
+	sqcli.exe -databank action=clear project=Builder name=Results
+	sqcli.exe -databank action=create project=Retester name=Custom
+	sqcli.exe -databank action=remove project=Retester name=Custom
+	sqcli.exe -databank action=copy project=Builder name=Results destproject=Retester destdatabank=Results
+	sqcli.exe -databank action=synctofiles project=Builder name=Results
+	sqcli.exe -databank action=syncfromfiles project=Builder name=Results
+	sqcli.exe -databank action=move project=Builder name=Results destproject=Retester destdatabank=Results
+	sqcli.exe -databank action=export project=Builder name=Results file=C:/data/DatabankExport.csv
+	sqcli.exe -databank action=export project=Builder name=Results file=C:/data/DatabankExport.xlsx view=Custom
+-------------------------------------------
+-symbol Manage symbols.
+-------------------------------------------
+Arguments:	
+	action: Performs the specific action [list,add,edit,delete,clear]
+	symbols: List of symbols
+	instrument: (optional) Symbol instrument
+	bartype: (optional) Bar type [startofbar, endofbar] (startofbar)
+	datatype: (optional) Data type, [M1,TICK] (M1)
+	datasource: (optional) Data source, [dukascopy,file,darwinex,crypto,yahoo,mt5api] (dukascopy)
+	exchange: (optional) Exchange, [Binance,BinanceCoinM,Bitfinex,BinanceUsdtM,Coinbase,Poloniex] (Binance)
+	timeframe: (optional) Imported timeframe [TICK,M1,M3,M5,M15,M30,H1,H2,H3,H4,H6,H8,H12,D1,Weekly,Monthly]
+	postfix: (optional) Data postfix	
+	broker: (optional) Name of broker (SQ Default)
+	path: (for mt5api datasource only) Path to mt5 installation
+	datefrom: for mt5api datasource only) Data to be downloaded from
+	dateto: (for mt5api datasource only) Data to be downloaded to
+Example:
+	sqcli.exe -symbol action=list
+	sqcli.exe -symbol action=add symbols=EURUSD,GBPUSD datasource=dukascopy datatype=TICK
+	sqcli.exe -symbol action=add symbols=ETHBTC datasource=crypto exchange=Binance timeframe=D1
+	sqcli.exe -symbol action=add symbols=EURUSD,GBPUSD datasource=darwinex datatype=M1
+	sqcli.exe -symbol action=add symbols=EURUSD datasource=darwinex datatype=M1 broker=[[Darwinex]]
+	sqcli.exe -symbol action=edit symbol=EURUSD name=EURUSD_OLD
+	sqcli.exe -symbol action=delete symbols=EURUSD,GBPUSD	
+	sqcli.exe -symbol action=clear symbols=EURUSD,GBPUSD
+-------------------------------------------
+-instrument Manage instruments.
+-------------------------------------------
+Arguments:	
+	action: Performs the specific action [list,add,edit,delete]
+	instrument: Instrument to add
+	description: (optional) Instrument description
+	pointvalue: (optional) Point value (100000)
+	ticksize: (optional) Pip/Tick size (0.0001)
+	tickstep: (optional) Pip/Tick step (0.00001)
+	defaultspread: (optional) Default spread (2)
+	datatype: (optional) Data type, [stock,futures,forex,cfds,etf,index,crypto] (forex)
+	commissions: (optional) Commissions
+	minDistance: (optional) Minimal distance (0)
+	orderSizeMultiplier: (optional) Order size multiplier (1)
+	orderSizeStep: (optional) Order size step (1)
+	swap: (optional) Swap
+	broker: (optional) Name of broker (SQ Default)
+Example:
+	sqcli.exe -instrument action=list
+	sqcli.exe -instrument action=add instrument=EURUSD
+	sqcli.exe -instrument action=edit instrument=EURUSD datatype=forex
+	sqcli.exe -instrument action=delete instruments=EURUSD
+-------------------------------------------
+-data Manage data.
+-------------------------------------------
+Arguments:	
+	action: Performs the specific action [update,import,export,exportToMT4,exportToMT5,clone,timezones]
+	symbol: Symbol to import	
+	filepath: Path of file
+	filename: Name of file
+	instrument: (optional)Symbol instrument
+	bartype: (optional)Bar type [startofbar, endofbar]
+	errorhandling: (optional)Data errors handling [stop,ignore]
+	timezone: (optional) Timezone. To list the available timezones, use command -tz [Etc/UCT, Europe/London, America/New_York...] 
+	timeframe: (optional) Imported timeframe [auto,Intraday,TICK,M1,M5,M15,M30,H1,H4,D1]
+	datefrom: (optional) Date from in format 'yyyy.MM.dd'
+	dateto: (optional) Date to in format 'yyyy.MM.dd'
+	outputdir: (optional) Target directory
+	prefix: (optional) File prefix
+	format: (optional) Format, [Generic tick format (comma delimited),Generic bar format (comma delimited),Generic tick format (tab delimited),Generic bar format (tab delimited),MetaTrader4 tick format,MetaTrader4 bar format,Amibroker bar (aqi) format,Amibroker tick (aqi) format,Birt's CSV2FXT format,Forex Tester bar format,Forex SB bar format,Ninja Trader tick format,Ninja Trader bar format,Neuroshell Trader format,Tradestation bar format] (MetaTrader4 bar format)
+	cIncludeHeader: (optional - only for Custom format) Include header
+	cHeader: (optional - only for Custom format) Header format
+	cFormat: (optional - only for Custom format) Format definitio
+	postfix: (optional) Data postfix (_{timeframe}_{cloneTime})
+	removeWeekends: (optional) Remove weekends [true,false] (false)
+	hours: (optional) Fixed shift in hours [stop,ignore]
+	appPath: MT4 Installation folder
+	dataPath: MT4 Data folder
+	serverName: Server name
+	mt4Symbol: Symbol from MT4 data specification file
+	mt4SymbolName: Name in MT4
+	spreadType: Spread type [points,pips,real]
+	spreadValue: Spread in points/pips
+	
+Example:
+	sqcli.exe -data action=update
+	sqcli.exe -data action=update symbols=GBPUSD_M1
+	sqcli.exe -data action=import symbol=EURUSD instrument=EURUSD filepath=C:/data/EURUSD.csv
+	sqcli.exe -data action=export symbols=EURUSD_M1,GBPUSD_M1 timeframe=M1 datefrom=2018.01.01 dateto=2018.12.31 outputdir=C:/data
+	sqcli.exe -data action=export symbols=EURUSD_M1 timeframe=M1 format=Custom cFormat=[Date:yyyy.MM.dd],[Time:HH:mm],[Open],[High],[Low],[Close],[Volume] outputdir=C:/data
+	sqcli.exe -data action=export symbols=EURUSD_M1 timeframe=M1 format=Custom cIncludeHeader=true cHeader=Date,Time,Open,High,Low,Close,Volume cFormat=[Date:yyyy.MM.dd],[Time:HH:mm],[Open],[High],[Low],[Close],[Volume] outputdir=C:/data
+	sqcli.exe -data action=clone symbols=AUDCAD hours=8
+	sqcli.exe -data action=timezones
+	sqcli.exe -data action=exportToMT4 symbol=EURUSD timeframe=M1 appPath=C:/mt4 dataPath=C:/Users/Tomas/AppData/Roaming/MetaQuotes/Terminal/BB190E062770E27C3E79391AB0D1A117 serverName=Demo
+	sqcli.exe -data action=exportToMT4 symbol=EURUSD timeframe=M1 appPath=C:/mt4 dataPath=C:/Users/Tomas/AppData/Roaming/MetaQuotes/Terminal/BB190E062770E27C3E79391AB0D1A117 serverName=Demo mt4Symbol=EURUSD mt4SymbolName=EURUSD
+	sqcli.exe -data action=exportToMT5 symbol=EURUSD timeframe=Tick
+	sqcli.exe -data action=exportToMT5 symbol=EURUSD timeframe=M1 spreadType=points spreadValue=2 datefrom=2018.01.01 dateto=2018.12.31 outputdir=C:/data filename=EURUSD
+-------------------------------------------
+-tools Tools.
+-------------------------------------------
+Arguments:
+	action: Performs the specific action [orderstocsv,orderstoxlsx]
+	file: Path of the file or folder
+	usecomma: (optional) Path of the output file or folder
+	data: (optional) Data [main,all]
+Example:
+	sqcli.exe -tools action=orderstocsv file="Strategy 0.1487.sqx"
+	sqcli.exe -tools action=orderstoxlsx file="Strategy 0.1487.sqx"
+	sqcli.exe -tools action=orderstocsv file=C:/reports output=C:/trades
+	sqcli.exe -tools action=orderstocsv file="Strategy 0.1487.sqx" usecomma=true data=main
+-------------------------------------------
+-stockgroup Stockgroups.
+-------------------------------------------
+Arguments:
+	action: Performs the specific action [updateAll-update stocks from all group, update-update stocks from specified group, importstocks-import stocks into group from file, exportstocks-export list of stocks from group into file, import-import group definition, export-export geoup definition, list-list of groups]
+	id: Id of stockgroup (for action=update|importstocks|exportstocks)
+	filepath: path to file (for action=importstocks|exportstocks)
+Example:
+	sqcli.exe -stockgroup action=updateAll
+	sqcli.exe -stockgroup action=update id=1	
+	sqcli.exe -stockgroup action=list
+	sqcli.exe -stockgroup action=importstocks filepath=stocks.csv id=1	
+	sqcli.exe -stockgroup action=exportstocks filepath=stocks.csv id=1	
+	sqcli.exe -stockgroup action=import filepath=stocks.csv	
+	sqcli.exe -stockgroup action=export filepath=stocks.csv id=1	
+-------------------------------------------
+-brokerprofile BrokerProfiles.
+-------------------------------------------
+Arguments:
+	action: Performs the specific action [updateAll, update, importstocks, exportstocks, list]
+	id: Id of brokerprofile (for action=update|importstocks|exportstocks)
+	filepath: path to file (for action=importstocks|exportstocks)
+Example:
+	sqcli.exe -brokerprofile action=updateAll
+	sqcli.exe -brokerprofile action=update id=1	
+	sqcli.exe -brokerprofile action=list
+	sqcli.exe -brokerprofile action=importstocks filepath=stocks.csv id=1	
+	sqcli.exe -brokerprofile action=exportstocks filepath=stocks.csv id=1	
+	sqcli.exe -brokerprofile action=import filepath=stocks.csv	
+	sqcli.exe -brokerprofile action=export filepath=stocks.csv id=1	
+-------------------------------------------
+-run Runs commands from the file.
+-------------------------------------------
+Arguments:	
+	file: Path of the file
+Example:
+	sqcli.exe -run file=C:/data/commands.txt
+-------------------------------------------
+-gui Starts webserver to access GUI remotely.
+-------------------------------------------
+Example:
+	sqcli.exe -gui
+-------------------------------------------
+-deletefile Deletes the specific file.
+-------------------------------------------
+Arguments:
+	file: Path of the file or folder
+Example:
+	sqcli.exe -deletefile file=C:/reports/evaluate.txt
+-------------------------------------------
+-waitfor Waits for user/file
+-------------------------------------------
+Arguments:
+	action: Waits for action [user,file]
+	file: Path of the file or folder
+Example:
+	sqcli.exe -waitfor action=user
+	sqcli.exe -waitfor action=file file=C:/reports/controlfile.txt
+-------------------------------------------
+-execute Calls external script
+-------------------------------------------
+Arguments:
+	file: Path of the script
+Example:
+	sqcli.exe -execute file=C:/reports/evaluate.bat
+	sqcli.exe -waitfor 
+-------------------------------------------
+> Redirects output to a file
+-------------------------------------------
+Example:
+	sqcli.exe -symbol action=list > C:/reports/output.log"
+-------------------------------------------
+-license Manage license
+-------------------------------------------
+Arguments:
+	action: Performs the specific action [info,update]
+	code: (optional) License code
+Example:
+	sqcli.exe -license action=info
+	sqcli.exe -license action=update code=xxxxx
+-------------------------------------------
+-exit Exit.
+-------------------------------------------
+Example:
+	sqcli.exe -exit
+	

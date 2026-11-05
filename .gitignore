@@ -1,0 +1,40 @@
+# Generated runtime output, reports, backups, caches and local test tooling.
+/out/
+/report/
+/reports/
+/log/
+/logs/
+/backup/
+/backups/
+/cache/
+/.cache/
+/deps/
+/dependencies/
+/test-results/
+/TestResults/
+/coverage/
+*.log
+*.bak
+*.tmp
+*.pyc
+*.trx
+*.nunit.xml
+coverage.xml
+coverage.cobertura.xml
+
+# Historical root-level remote-control artifacts.
+rustdesk-*.exe
+rustdesk-tray-state.txt
+/*.png
+/screenshots/
+uia-dump.txt
+hosts.backup-*
+
+# Fixture data is source, even when it resembles generated output.
+!tests/fixtures/
+!tests/fixtures/**
+
+# Machine-local configuration and credentials must always remain private.
+/config/local.psd1
+*.local.*
+credentials.local.txt
