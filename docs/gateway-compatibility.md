@@ -1,6 +1,7 @@
 # Connections and proxy
 
-Last verified **2026-10-30, Asia/Shanghai**. This is the connection runbook;
+Route observations below are dated **October 30–31, 2026, Asia/Shanghai**.
+Documentation review on November 7 did not retest these routes. This is the connection runbook;
 the [October 20 OMR review](history/gateway-review-20261020.md) is historical.
 
 ## Known direct routes

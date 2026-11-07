@@ -15,12 +15,16 @@ StrategyQuant X 145 and Mouse Without Borders. Start with the
 | Repair shared mouse/keyboard and automatic reconnect | [Mouse Without Borders](docs/mouse-without-borders.md) |
 | Review SQX 144 assets for 145 | [Asset migration](docs/sqx-asset-migration.md) |
 | Change a deployment or lifecycle safely | [Safe operations](docs/safe-operations.md) and [deployment](docs/deployment-migration.md) |
+| Understand the implemented design and file contracts | [Architecture](docs/architecture.md) |
+| Configure or inspect command interfaces | [Configuration](docs/configuration.md) and [command reference](docs/command-reference.md) |
+| Diagnose a failed check or operation | [Troubleshooting](docs/troubleshooting.md) |
 | Develop or validate source | [Testing](docs/testing.md) |
 | Find unresolved work | [Pending checks](CLEANUP-TODO.md) |
 
-The latest documented verification is **2026-10-31, Asia/Shanghai**. HypoMux uses a configured static target address; MiFi addresses
-require fresh discovery. Status snapshots and audit
-artifacts stay in ignored `out/`; current counts belong in monitoring reports.
+Published module: **1.0.1**. Documentation reviewed **2026-11-07** against the
+published source. This date does not refresh remote health, addresses or S001
+state. Operational snapshots have their own timestamps and private prerequisites;
+current counts belong in monitoring evidence, not installation instructions.
 
 ## Repository layout
 
@@ -35,6 +39,21 @@ artifacts stay in ignored `out/`; current counts belong in monitoring reports.
 | `archive/2026-10/` | Unsupported old scripts, including destructive actions; do not execute |
 | `out/` | Ignored snapshots, audit reports and private operation evidence |
 
+## Obtain the source
+
+Use Git on Windows to clone this repository, then open its root in PowerShell.
+PowerShell 7 is required for the supplied wrappers/test bootstrap; Windows
+PowerShell 5.1 is also verified. Python 3 is needed for the documentation gate
+and standalone helpers, with no pip dependencies.
+
+```powershell
+git clone https://github.com/victor000000/ERAZER_remote_control.git
+Set-Location ERAZER_remote_control
+```
+
+A source clone does not install SQX, RustDesk, MWB, SSH identities or tasks. Use
+the offline configuration-load example below before preparing private access.
+
 ## First read-only check
 
 From the Windows controller, with the existing SSH identity configured:
@@ -43,19 +62,11 @@ From the Windows controller, with the existing SSH identity configured:
 ssh erazer-hotspot hostname
 ```
 
-For a silent PowerShell check from this WSL workspace:
-
-```bash
-python3 out/s001-preservation/remote-hotspot.py <<'PS'
-Get-Process -Name StrategyQuantX,sqcli -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,CPU,WorkingSet64
-PS
-```
-
-That Python helper is a retained local artifact, not part of a clean checkout.
-The [connection runbook](docs/gateway-compatibility.md) gives maintained
-alternatives and address-discovery rules. Run SQX status scripts on ERAZER: loopback refers to the machine executing
-the command. Current GUI monitoring uses authenticated port8080; GUI port5050
-may return `CLI not ready`. Follow the monitoring runbook.
+A fresh checkout does not include private SSH keys, host overlays or ignored
+monitoring helpers. For an offline first step, use the configuration-load example
+below. For actual remote access follow the [connection runbook](docs/gateway-compatibility.md).
+SQX status commands run on the SQX host; loopback on the controller is not the
+target. CLI and authenticated GUI monitoring are separate interfaces.
 
 ## Configuration and deployment
 
@@ -86,7 +97,7 @@ project's native environment and Docker data owned by other local projects.
 
 ### Configuration and activation
 
-Generic toolkit scripts support `-ConfigPath` and explicit `-LocalConfigPath`;
+The generic scripts listed in the [command reference](docs/command-reference.md) support `-ConfigPath` and explicit `-LocalConfigPath`;
 a local file is never loaded automatically. Keep private overlays in ignored
 `out/`. Never put passwords, keys or license material in tracked files.
 
@@ -100,3 +111,11 @@ standalone helper or report; review [deployment scope](docs/deployment-migration
 Prefer silent, headless Windows commands. Preserve all strategies, saved Wi-Fi
 profiles and the current engine. Never run a second SQX instance, force-kill it,
 edit a live `.cfx`, or reinstall controller Tailscale as a fallback.
+
+## Releases and documentation scope
+
+[Release 1.0.1](docs/releases/1.0.1.md) records the task-state safeguards.
+The [documentation audit](docs/documentation-audit.md) inventories published
+and native-only records, validation scope and remaining limits. Published docs
+are not a substitute for the current authorized operator ledger. There is no
+automatic deployment or requirement for Docker.

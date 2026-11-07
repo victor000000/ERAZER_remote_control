@@ -1,5 +1,8 @@
 # Documentation review — October 21, 2026
 
+> Historical pass. See the [November 7 documentation audit](documentation-audit.md)
+> for current source coverage and check boundaries. The dated findings below remain unchanged.
+
 Scope: repository documentation and navigation only. No live engine, network,
 service, task, project archive or strategy asset was changed in this pass.
 Existing source/configuration/test changes and raw CLI help were preserved.

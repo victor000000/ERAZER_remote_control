@@ -1,5 +1,9 @@
 # Pending work and verification
 
+Source-documentation review: see the [November 7 audit](docs/documentation-audit.md).
+The dated operational checklist below is retained; this source pass does not
+refresh its live state or close native acceptance work.
+
 Updated **2026-11-02**. This is the open-work list; completed live work is in its
 runbook and timestamped local evidence. The [historical checklist](docs/history/CLEANUP-TODO-before-restructure.md)
 is preserved and is not a current action list.

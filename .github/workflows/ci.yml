@@ -37,6 +37,15 @@ jobs:
           '@ | python -
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+      - name: Check documentation links, regressions and script contracts
+        shell: pwsh
+        run: |
+          python build/check_docs.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -m unittest discover -s tests -p test_documentation.py -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          ./build/Check-DocumentationCommands.ps1
+
       # Saving with pwsh avoids Windows PS 5.1's first-use NuGet provider
       # bootstrap. Both matrix jobs still execute every check in their own shell.
       - name: Save pinned repository-local test dependencies

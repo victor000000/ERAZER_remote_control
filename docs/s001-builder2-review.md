@@ -1,5 +1,8 @@
 # Builder 2 review hold — 2026-10-23
 
+> Dated hold/release record. Later authorization and run state belong to the
+> [operator handoff](s001-current-handoff.md); do not reinstall this historical hold.
+
 The user requested a project review after Builder 2 finishes and before S001
 continues downstream. This supersedes automatic B02 namespace recovery.
 

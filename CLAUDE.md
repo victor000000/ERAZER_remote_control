@@ -45,3 +45,8 @@ broaden tests unnecessarily for documentation-only changes.
 Maintain concise runbooks with one owner per topic. Keep time-varying counts
 in snapshots, dated evidence in history, and unresolved work in
 [CLEANUP-TODO.md](CLEANUP-TODO.md). Existing user changes must be preserved.
+
+For source design and documentation changes, use the [implemented design](docs/architecture.md),
+[configuration](docs/configuration.md) and [command reference](docs/command-reference.md).
+Run the offline doc checks in [testing](docs/testing.md); keep dated/private
+operator evidence distinct from the published source contract.

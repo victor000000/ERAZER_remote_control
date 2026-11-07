@@ -1,6 +1,6 @@
 # SQX monitoring procedure
 
-Current deployment is GUI145 on ERAZER. Read the dated
+The documented October deployment was GUI145 on ERAZER. Verify the actual mode and read the dated
 [current handoff](s001-current-handoff.md) before each new operator session.
 Times in reports are Asia/Shanghai; native log filenames may encode UTC.
 
@@ -104,7 +104,9 @@ CPU/RAM/paging, relevant errors, data progress and ETA limitations. The latest
 user preference is to notify when Builder 2 completes or anything needs attention;
 retain routine evidence without repeatedly alerting on an unchanged known issue.
 
-Keep the existing hourly monitor active. Do not mark the overall work complete
+The earlier operator policy requested keeping its hourly monitor active; this
+repository neither creates nor verifies that schedule. Consult its current owner
+before changing it. Do not mark the overall work complete
 at Builder 2 completion: the handoff lists final export, preservation, historical
 repair, data and isolated plugin acceptance gates. Schedule updates must retain
 all pending work and consumed-authorization boundaries.

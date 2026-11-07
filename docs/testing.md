@@ -7,6 +7,9 @@ Use the native Windows environment described in the
 required for development, tests or CI. Run from the repository root on Windows:
 
 ```powershell
+python .\build\check_docs.py
+python -m unittest discover -s tests -p test_documentation.py
+pwsh -NoProfile -File .\build\Check-DocumentationCommands.ps1
 pwsh -NoProfile -File .\build\Install-TestDependencies.ps1
 pwsh -NoProfile -File .\build\Invoke-Checks.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build\Invoke-Checks.ps1
@@ -19,7 +22,12 @@ is offline and fails clearly if the pinned dependencies are absent.
 
 ## What is checked
 
-- Tracked Python helpers are syntax-checked without importing or running them.
+- The workflow separately syntax-compiles every tracked Python file without
+  importing or running operational helpers. Invoke-Checks.ps1 itself checks
+  PowerShell; it does not run the Python syntax/doc checks.
+- Documentation checks validate current relative Markdown links/fragments,
+  regression-test the checker, and compare documented parameter names with
+  PowerShell ASTs. They neither fetch external links nor execute script examples.
 - All repository PowerShell scripts/data files are parsed under the selected
   engine, including archived files. Parsing never executes the archive.
 - Maintained code receives safety lint for automatic-variable assignment and
@@ -92,3 +100,24 @@ PowerShell 5.1 parses them consistently on different Windows code pages. Keep
 this marker when editing those files. If a WSL-launched Windows test process
 cannot resolve `git` despite a valid PATH, verify that its `PATHEXT` includes
 `.EXE`; repair only that test process environment before rerunning.
+
+## Documentation checks and exclusions
+
+The first three commands above need no downloaded PowerShell test modules.
+Use `python3` for the Python commands in WSL; run the AST command with a native
+Windows PowerShell executable. The examples in the command guide that load
+configuration or simulate a proxy decision are offline; remote checks and
+install/repair examples are reviewed statically, not exercised.
+
+The Markdown checker includes tracked and nonignored new Markdown in its source
+checkout. Four frozen snapshots under docs/history retain old-layout links and
+are explicitly excluded; the history index and current guides are checked.
+The checker understands current inline links and ATX heading anchors, not every
+Markdown extension, external URL availability or ignored/private evidence.
+CLI annotations check named parameters, not all values, defaults or shell
+quoting. Source review remains required. See the [audit](documentation-audit.md)
+for the exact inventory and limitations.
+
+The package version remains 1.0.1 for this docs-only revision. Release records
+are historical results, not evergreen test-count promises; inspect the exact
+current CI run and artifacts for acceptance at a published commit.

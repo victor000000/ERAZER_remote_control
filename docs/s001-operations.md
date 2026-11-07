@@ -10,8 +10,10 @@ Read [the current handoff](s001-current-handoff.md), [monitoring](sqx-monitoring
 and [preservation](s001-preservation.md) first. The sections below retain dated
 implementation and incident details. Launch/start/restart commands are historical
 recipes, **not commands to run against the current advancing GUI engine**.
-Current configured caps are325/500/1000; Builder1 has finished325. PID4216 and
-older headless processes below have been superseded by the Oct31 recovery.
+The October baseline configured caps were325/500/1000; its Builder1 had
+finished325. These are historical values, superseded by later operator-ledger
+updates, not current capacity/authorization claims. PID4216 and older headless
+processes below were superseded by the Oct31 recovery.
 Never replay a consumed one-time approval or a fresh-run launcher as resume.
 
 ## Historical recovery record

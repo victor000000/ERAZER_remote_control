@@ -10,8 +10,7 @@ Keep Windows Task Scheduler, installed SQX, SSH and MWB on their intended host.
 
 ## Local cleanup scope
 
-The controller has Docker Desktop installed. The initial read-only inventory
-found containers for `data_providers`, `dte_21_screener` and `my_brain_work`,
+The initial October 23 read-only inventory found Docker Desktop and containers for `data_providers`, `dte_21_screener` and `my_brain_work`,
 images for their runners, and `multi-stack` volumes. These belong to other
 projects. The inventory changed during inspection; always refresh it before
 removal. Raw inspection and removal evidence stays privately in ignored

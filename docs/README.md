@@ -2,12 +2,17 @@
 
 Use the runbook for the operation rather than a historical log or an old chat.
 For active S001 work, start with [the current handoff](s001-current-handoff.md),
-then monitoring and preservation. Documentation refreshed October31,2026; dated
-observations must be rechecked before action.
+then monitoring and preservation. Documentation reviewed November 7, 2026
+against published module 1.0.1; dated observations must be rechecked before action.
 All recorded times are Asia/Shanghai unless explicitly stated otherwise.
 
 | Document | Owns |
 | --- | --- |
+| [Implemented design](architecture.md) | Components, trust/effect boundaries and file/provenance contracts |
+| [Configuration](configuration.md) | Loader precedence, schema/defaults, private overrides and packaging |
+| [Command reference](command-reference.md) | Script parameters, effects, CLI actions and status JSON limits |
+| [Troubleshooting](troubleshooting.md) | Symptom-to-evidence decisions and recovery boundaries |
+| [Documentation audit](documentation-audit.md) | Owned-doc inventory, publication/native reconciliation and check exclusions |
 | [Connections and proxy](gateway-compatibility.md) | Known routes, host identity, discovery, proxy boundaries |
 | [Current S001 handoff](s001-current-handoff.md) | Dated state, authorization boundaries, recovery decisions and completion gates |
 | [Strategy preservation](s001-preservation.md) | Receipt chain, SHA256 verification, historical6610 repair and rollback |
@@ -22,7 +27,7 @@ All recorded times are Asia/Shanghai unless explicitly stated otherwise.
 | [Pending checks](../CLEANUP-TODO.md) | Open issues and acceptance evidence needed |
 | [Raw CLI help](sqx-cli-help.txt) | Historical capture; not a verified SQX 145 command contract |
 | [History](history/README.md) | Superseded observations; never current instructions |
-| [Documentation review](documentation-review.md) | Changes made in the October 21 documentation pass |
+| [Earlier documentation review](documentation-review.md) | Dated October 21 pass; superseded for current coverage by the documentation audit |
 
 ## Updating documentation
 

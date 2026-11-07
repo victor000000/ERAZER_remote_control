@@ -83,7 +83,11 @@ Before transferring or activating anything:
 3. Plan how the live task actions will pass explicit config paths and resolve
    the new complete bundle. Keep existing `SQX`/`Proxy` folders and old task
    definitions available for rollback. Do not remove fallback Wi-Fi profiles.
-4. Review task registration explicitly. `Register-SqxTask.ps1` is for an
+4. Review task registration explicitly. Since 1.0.1, generic registration
+   refuses the reserved `SQX-Task1-Headless` name even with Force. Existing task
+   replacement needs positively idle state; starting requires Enabled/Ready and
+   an exact action match. See [configuration](configuration.md) for the independent
+   generic-task case. `Register-SqxTask.ps1` is for an
    on-demand headless task without automatic triggers. `Start-SqxEngine.ps1`
    is its payload, not a persistent SSH-child process. Do not add headless boot
    triggers or replace `StartTradingAppsAtLogon` as a side effect of migration.

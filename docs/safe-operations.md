@@ -36,7 +36,9 @@ settings are not changed as a side effect of on-demand headless work.
 
 The deployed S001 task uses the preserving launcher. Generic
 `Register-SqxTask.ps1` / `Start-SqxProject.ps1` expect a different action and must
-not replace that task merely to satisfy their checks. Generic toolkit
+not replace that task merely to satisfy their checks. Module 1.0.1 enforces the
+reserved name in registration and rejects uncertain task states. This does not
+remove the inspection/mutation race or protect renamed preserving tasks. Generic toolkit
 procedures are in [deployment migration](deployment-migration.md).
 Project stop and engine exit are distinct; use previews and inspect status
 before a deliberate stop. A GUI save/exit dialog needs desktop confirmation.

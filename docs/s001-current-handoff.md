@@ -1,5 +1,12 @@
 # S001 current handoff and recovery decisions
 
+> Public-source scope correction, 2026-11-07: the October baseline below is
+> historical. The native operator workspace has a newer November 7 handoff and
+> next-cycle instructions that are not copied into this public snapshot. Read
+> that current authorized ledger and obtain fresh identity/progress evidence
+> before acting; old builder counts and restart prohibitions below describe the
+> October run. This source review does not authorize any lifecycle operation.
+
 Documentation baseline: **2026-10-31 06:18 Asia/Shanghai**. This is a dated
 handoff, not a live health assertion. Obtain a fresh snapshot before acting.
 This document takes precedence over older process IDs, launch examples and
