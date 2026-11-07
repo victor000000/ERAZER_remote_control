@@ -10,7 +10,7 @@ if (-not $PSCmdlet.ShouldProcess($Project, "Start existing reviewed SQX task fro
 if ($env:COMPUTERNAME -ine $config.Target.HostName) { throw 'Start SQX on the configured target machine, not the controller.' }
 $current = Get-ToolkitTask -Name $config.Sqx.TaskName
 if ($current.QueryState -ne 'Present') { throw "Task is $($current.QueryState). Register it explicitly with Register-SqxTask.ps1; nothing was changed." }
-if (-not $current.Enabled -or $current.RunState -in @('Running', 'Queued')) { throw 'Scheduled task is disabled or active; no start was requested.' }
+if (-not $current.Enabled -or $current.RunState -ne 'Ready') { throw 'Scheduled task is disabled, active, or not confirmed ready; no start was requested.' }
 $expected = New-SqxTaskAction -EngineScript (Join-Path $PSScriptRoot 'Start-SqxEngine.ps1') -Task $Task -Project $Project -ConfigPath $ConfigPath -LocalConfigPath $LocalConfigPath
 $definition = Get-ScheduledTask -TaskName $config.Sqx.TaskName -ErrorAction Stop
 $actions = @($definition.Actions)

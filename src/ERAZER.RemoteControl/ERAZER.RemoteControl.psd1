@@ -1,6 +1,6 @@
 @{
     RootModule = 'ERAZER.RemoteControl.psm1'
-    ModuleVersion = '1.0.0'
+    ModuleVersion = '1.0.1'
     GUID = '9dba2cf6-eeb5-4d96-8f88-5b329df1afcc'
     Author = 'ERAZER Remote Control contributors'
     Description = 'Testable configuration, SQX, proxy and Windows task helpers. Import has no operational side effects.'
