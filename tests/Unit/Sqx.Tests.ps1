@@ -97,6 +97,22 @@ Describe 'SQX offline regression contracts' {
         }
     }
 
+    Context 'Required project status count' {
+        It 'reads the same well-formed count used to establish readiness' {
+            $status = "Status of project Synthetic" + [char]10 + "Strategies generated 1,23" + [char]10 + "Strategies generated 4,567"
+            Test-SqxResponse -Content $status -Kind Status | Should -BeTrue
+            (ConvertFrom-SqxStatus -Content $status).Generated | Should -Be 4567
+        }
+        It 'rejects incomplete or invalid generated counts' -ForEach @(
+            @{ Count = '42 unfinished' }, @{ Count = '1,23' }, @{ Count = '42.5' },
+            @{ Count = ([string][char]10 + '42') }
+        ) {
+            $status = "Status of project Synthetic" + [char]10 + "Strategies generated $Count"
+            Test-SqxResponse -Content $status -Kind Status | Should -BeFalse
+            { ConvertFrom-SqxStatus -Content $status } | Should -Throw '*not a ready SQX project status*'
+        }
+    }
+
     Context 'API URL encoding' {
         It 'leaves grammar equals literal but encodes ampersands, plus, quotes and spaces' {
             $command = New-SqxProjectCommand -Action startFromTask -Project 'A & B+[145] $1#%' -Task 2

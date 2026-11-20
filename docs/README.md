@@ -3,7 +3,7 @@
 Use the runbook for the operation rather than a historical log or an old chat.
 For active S001 work, start with [the current handoff](s001-current-handoff.md),
 then monitoring and preservation. Documentation reviewed November 7, 2026
-against published module 1.0.1; dated observations must be rechecked before action.
+against module 1.0.1. See [release 1.0.2](releases/1.0.2.md) for the current status parsing behavior. Recheck dated observations before live actions.
 All recorded times are Asia/Shanghai unless explicitly stated otherwise.
 
 | Document | Owns |

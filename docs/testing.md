@@ -118,6 +118,5 @@ CLI annotations check named parameters, not all values, defaults or shell
 quoting. Source review remains required. See the [audit](documentation-audit.md)
 for the exact inventory and limitations.
 
-The package version remains 1.0.1 for this docs-only revision. Release records
-are historical results, not evergreen test-count promises; inspect the exact
-current CI run and artifacts for acceptance at a published commit.
+Read the [release notes](releases/1.0.2.md) for the current module changes.
+Check workflow results and artifacts at the exact commit referenced by a release.

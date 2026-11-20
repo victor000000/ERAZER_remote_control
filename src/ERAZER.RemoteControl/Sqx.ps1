@@ -1,3 +1,5 @@
+$script:SqxGeneratedCountLine = [regex]'(?m)^Strategies generated[^\S\r\n]+([0-9]+|[0-9]{1,3}(?:,[0-9]{3})+)[^\S\r\n]*\r?$'
+
 function New-SqxProjectCommand {
     [CmdletBinding()]
     param(
@@ -31,7 +33,9 @@ function Test-SqxResponse {
     [CmdletBinding()]
     param([AllowEmptyString()][string]$Content, [ValidateSet('Status', 'Help', 'Command')][string]$Kind = 'Command')
     if ([string]::IsNullOrWhiteSpace($Content) -or $Content -match '(?im)CLI not ready|^\s*Error\b|Unrecognized (?:command|action)|Unable to resolve|^\s*<(!DOCTYPE|html)') { return $false }
-    if ($Kind -eq 'Status') { return ($Content -match 'Status of project ' -and $Content -match '(?m)^Strategies generated\s+\d+') }
+    if ($Kind -eq 'Status') {
+        return ($Content -match 'Status of project ' -and $script:SqxGeneratedCountLine.IsMatch($Content))
+    }
     if ($Kind -eq 'Help') { return ($Content -match '(?m)^Usage:') }
     return $true
 }
@@ -40,8 +44,10 @@ function ConvertFrom-SqxStatus {
     [CmdletBinding()]
     param([Parameter(Mandatory)][string]$Content)
     if (-not (Test-SqxResponse $Content -Kind Status)) { throw 'Response is not a ready SQX project status.' }
+    $generatedText = $script:SqxGeneratedCountLine.Match($Content).Groups[1].Value
+    $generated = [double]::Parse($generatedText.Replace(',', ''), [Globalization.CultureInfo]::InvariantCulture)
     $numbers = @{}
-    foreach ($label in @('Strategies generated', 'Accepted', 'Rejected', 'Failed', 'Strategies per hour', 'Accepted strategies per hour', 'In databank')) {
+    foreach ($label in @('Accepted', 'Rejected', 'Failed', 'Strategies per hour', 'Accepted strategies per hour', 'In databank')) {
         $match = [regex]::Match($Content, '(?m)^' + [regex]::Escape($label) + '\s+([\d,.]+)\s*%?\s*\r?$')
         if ($match.Success) {
             $numbers[$label] = [double]::Parse($match.Groups[1].Value.Replace(',', ''), [Globalization.CultureInfo]::InvariantCulture)
@@ -49,7 +55,7 @@ function ConvertFrom-SqxStatus {
     }
     $runtime = [regex]::Match($Content, '(?m)^Running time so far\s+(.+?)\s*\r?$').Groups[1].Value
     return [pscustomobject]@{
-        Generated = $numbers['Strategies generated']; AcceptedPercent = $numbers['Accepted']
+        Generated = $generated; AcceptedPercent = $numbers['Accepted']
         RejectedPercent = $numbers['Rejected']; Failed = $numbers['Failed']
         GeneratedPerHour = $numbers['Strategies per hour']; AcceptedPerHour = $numbers['Accepted strategies per hour']
         ProjectDatabankCount = $numbers['In databank']; Runtime = $runtime

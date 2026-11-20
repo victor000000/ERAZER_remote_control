@@ -21,10 +21,9 @@ StrategyQuant X 145 and Mouse Without Borders. Start with the
 | Develop or validate source | [Testing](docs/testing.md) |
 | Find unresolved work | [Pending checks](CLEANUP-TODO.md) |
 
-Published module: **1.0.1**. Documentation reviewed **2026-11-07** against the
-published source. This date does not refresh remote health, addresses or S001
-state. Operational snapshots have their own timestamps and private prerequisites;
-current counts belong in monitoring evidence, not installation instructions.
+Module version **1.0.2**. The [documentation audit](docs/documentation-audit.md)
+covers the 2026-11-07 source review. Use current monitoring evidence for remote
+health, addresses and S001 state before operational changes.
 
 ## Repository layout
 
@@ -114,7 +113,7 @@ edit a live `.cfx`, or reinstall controller Tailscale as a fallback.
 
 ## Releases and documentation scope
 
-[Release 1.0.1](docs/releases/1.0.1.md) records the task-state safeguards.
+[Release 1.0.2](docs/releases/1.0.2.md) describes the status parser fix and validation. [Release 1.0.1](docs/releases/1.0.1.md) records the task-state safeguards.
 The [documentation audit](docs/documentation-audit.md) inventories published
 and native-only records, validation scope and remaining limits. Published docs
 are not a substitute for the current authorized operator ledger. There is no
