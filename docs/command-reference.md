@@ -1,9 +1,8 @@
 # Command reference
 
-Run from the repository root in Windows PowerShell 5.1 or PowerShell 7 as
-appropriate. Git and PowerShell 7 are needed for development checks/wrappers;
-standalone Python helpers use Python 3's standard library. These are implemented
-script interfaces for module 1.0.1, not a full SQX vendor API specification.
+Run the examples from the repository root. The [deployment manifest](../config/deployment.psd1)
+lists the entries available in a staged bundle. See the [setup guide](../README.md#local-environment-no-docker-required)
+for module and test prerequisites.
 
 ## Safe first steps
 
@@ -13,11 +12,10 @@ $config.SchemaVersion
 .\scripts\network\Sync-ProxyWithNetwork.ps1 -DryRun -SimulateSsid 'unconfigured-example'
 ```
 
-The first example only loads configuration. The second uses synthetic network
-input and returns a decision without querying or changing the real network.
-Do not remove DryRun from simulated commands. A read-only remote identity check
-uses the operator's privately configured alias: `ssh erazer-hotspot hostname`.
-It requires private setup absent from a fresh checkout and is not an offline test.
+The configuration command prints schema version `1`. The simulated network
+command returns a decision with `Action` set to `Disable`. Keep `-DryRun` when
+using the simulation. For a live host identity check, use the controller's
+configured SSH alias and pinned host key as described in [connections](gateway-compatibility.md).
 
 ## Entry points
 
@@ -72,6 +70,8 @@ Task numbers are one-based for task starts; passing zero fails for those actions
 `stop` only stops the project. `gui` refuses an existing CLI engine before
 starting the configured GUI task. Preview a supported change with WhatIf;
 review [safe operations](safe-operations.md) before actual lifecycle commands.
+`status` and `list` issue read requests even with `-WhatIf`. Use the synthetic
+example above for an offline check.
 
 ## Status result
 
@@ -82,7 +82,12 @@ RejectedPercent, Failed, GeneratedPerHour, AcceptedPerHour, ProjectDatabankCount
 and Runtime. Processes contains Id, PriorityClass, WorkingSetMB and PrivateMB.
 
 Missing bank/task/save observations are null; missing optional numeric status
-fields are null and Runtime can be an empty string. EnginePresent only checks local sqcli,
+fields are null and Runtime can be an empty string. The CLI reply must contain
+the project-status header and a complete `Strategies generated` line with a
+nonnegative whole count. Plain digits and comma groups of three are accepted.
+Without a valid count line the status command throws and the readiness poll
+keeps waiting. See the [offline parser example](releases/1.0.2.md#check-a-status-reply-offline).
+EnginePresent only checks local sqcli,
 not GUI engines. The saved-count lookup is specifically
 `databank1_S001_use_nasdaq100`, even when another Project is selected. LastLoggedTask
 comes from the latest matching project log, not a guaranteed current native task.
@@ -100,3 +105,6 @@ and `--output`; output creation is a local write, while input databases open
 read-only. Use only offline copies and a new output directory for a review.
 The Python SSH transport is an importable helper, not a standalone CLI; importing
 it does not provision private SSH identities or a monitor.
+The controller-side transport and router inspector use WSL Windows interop
+and paths under `/mnt/c`. The router inspector also needs Python 3.9 or newer
+and IANA time-zone data for `zoneinfo`.

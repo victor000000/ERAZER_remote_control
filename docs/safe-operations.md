@@ -22,9 +22,11 @@ identity and saved Wi-Fi profiles. Controller Tailscale is removed and must not
 be restored as an incidental fallback. Network switching needs target-local
 rollback independent of SSH and actual target-side proxy validation.
 
-Persistent remote work uses scheduled tasks, not SSH child processes. Prefer
-hidden, noninteractive PowerShell. SYSTEM tasks must execute administrator-
-controlled files. Do not reuse or overwrite an unrelated task for elevation.
+Run persistent remote work through its reviewed scheduled task so an SSH
+disconnect leaves the process under Task Scheduler. For unattended Windows
+commands use a headless launcher and `-NoProfile -NonInteractive`. When a caller
+needs machine-readable output or an exit code, capture stdout, stderr and the
+actual child process exit code. SYSTEM tasks must execute administrator-controlled files.
 
 ## SQX and strategies
 
@@ -34,12 +36,13 @@ parallel GUI/CLI instance, live `.cfx` edit or fabricated verification marker.
 Back up and verify before an authorized offline replacement. GUI-at-logon
 settings are not changed as a side effect of on-demand headless work.
 
-The deployed S001 task uses the preserving launcher. Generic
-`Register-SqxTask.ps1` / `Start-SqxProject.ps1` expect a different action and must
-not replace that task merely to satisfy their checks. Module 1.0.1 enforces the
-reserved name in registration and rejects uncertain task states. This does not
-remove the inspection/mutation race or protect renamed preserving tasks. Generic toolkit
-procedures are in [deployment migration](deployment-migration.md).
+Read the actual task action, project and install before choosing a launcher.
+Generic registration protects the reserved `SQX-Task1-Headless` name.
+An independent generic task needs its own configured name. Starting it requires
+an Enabled/Ready task with the expected executable, arguments and working directory.
+Use the dedicated runbook for a preserving action. If a generic start times out
+after submission, inspect the running process and logs before retrying.
+See [deployment](deployment-migration.md) and [timeout recovery](troubleshooting.md#recover-after-a-headless-start-times-out).
 Project stop and engine exit are distinct; use previews and inspect status
 before a deliberate stop. A GUI save/exit dialog needs desktop confirmation.
 

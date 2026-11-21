@@ -1,28 +1,40 @@
 # SQX monitoring procedure
 
-The documented October deployment was GUI145 on ERAZER. Verify the actual mode and read the dated
-[current handoff](s001-current-handoff.md) before each new operator session.
-Times in reports are Asia/Shanghai; native log filenames may encode UTC.
+Identify the process, install, project and run from the operator's current
+handoff and a fresh observation on the target. Record each sample with its time
+zone. Native log filenames may use UTC.
+
+## Choose the monitor
+
+For a CLI run, the shipped [status script](../scripts/sqx/Get-SqxStatus.ps1)
+queries the configured API and inspects processes, logs and one named bank on
+the machine executing the script. Run it on the verified SQX host. Pass the
+reviewed `-LocalConfigPath` when the install, project or API differs from the
+defaults. `-AsJson` returns the fields in the [command reference](command-reference.md#status-result).
+The saved count covers only the bank named there. Compare a new sample with a
+matching run and log segment to establish progress.
+
+For a GUI run, use the deployment's authenticated GUI observer. The October
+[handoff](s001-current-handoff.md) describes a historical GUI installation.
+A fresh source clone supplies the transport and the CLI script. Obtain the
+GUI observer and its credentials from the operator's protected setup.
 
 ## Prerequisites
 
-Use the configured pinned SSH identity and exact hostname verification. The
-maintained transport is `scripts/remote/erazer_transport.py`; the compatibility
-wrapper `out/s001-preservation/remote-hotspot.py` and authenticated monitor below
-are retained local artifacts, absent from a clean checkout. Their evidence and
-private configuration must be available before reuse. Never substitute unpinned
-SSH or disable GUI authentication to work around missing configuration.
+Use the configured pinned SSH identity and verify the returned hostname.
+The [controller transport](../scripts/remote/erazer_transport.py) resolves the
+target for an operator with working private SSH configuration. Its callers
+supply the command and interpret its result.
 
-The GUI helper reads `SQX_GUI_REMOTE_PASSWORD` from ignored
-`credentials.local.txt` privately. Do not print this file, the password, token,
-or credential-bearing request bodies. API requests are sequential.
+The GUI helper reads its credentials locally. Run API requests sequentially
+and keep credential-bearing requests and raw responses in the private workspace.
 
 ## One check, in order
 
 1. Verify pinned host identity and record timestamp/route. Use bounded discovery
    if the primary route fails; consult the connection runbook before changing
    anything. A failed probe leaves engine state unknown.
-2. Run the read-only monitor below. Confirm a valid JSON result before using it.
+2. Run the configured read-only observer. Confirm a valid JSON result before using it.
    Check actual PID, executable/install, project, bank suffix, task, iteration
    and log segment. Old values are comparison baselines, never assumptions.
 3. Compare native counters only against a snapshot with all those identities
@@ -35,25 +47,18 @@ or credential-bearing request bodies. API requests are sequential.
 6. Save comparison, receipt and data-progress records. Notify completion or
    attention-worthy issues; retain routine snapshots even when no alert is sent.
 
-Example from the repository root in WSL; choose a **new** timestamp per check:
-
-```bash
-python3 out/sqx-monitor/gui-auth-query.py < out/sqx-monitor/monitor-gui.ps1 > out/sqx-monitor/YYYYMMDD-HHMM-current.json
-python3 -m json.tool out/sqx-monitor/YYYYMMDD-HHMM-current.json > /dev/null
-```
-
-This invokes read-only GUI queries through pinned transport. An empty/invalid
-output is a failed check, not zero counts. Preserve a separate connection or
-query failure record; do not overwrite the last valid baseline. Do not replay
-mutations after a timeout. If the helper is missing, restore/review it before
-use rather than inventing an equivalent authenticated command on the fly.
+Give each observation a fresh private output path. Capture the observer's exit
+code and diagnostics. Validate the JSON and match its identity fields before
+using it as a baseline. Preserve a failed or partial observation separately.
+If access times out after a start or stop request, inspect the existing run
+before deciding whether another request is necessary.
 
 ## Telemetry and interpretation
 
 | Field | Source / interpretation |
 | --- | --- |
 | Current project/task | Native GUI project list and current task log |
-| Generated / Accepted | `GET /engine/loadVisualLog?projectName=S001_reproduce_project&type=global`, task stats |
+| Generated / Accepted | Native GUI project visual log for the verified project and task |
 | Counter timestamp | `NativeStatsAt`; record task/iteration/log segment with it |
 | Native bank records | `NativeBankMetadata`; compare relevant builders and A00 |
 | Saved records | On-disk `.sqx` enumeration under the verified current bank suffix |
@@ -62,13 +67,12 @@ use rather than inventing an equivalent authenticated command on the fly.
 | Data activity | Engine-start-filtered downloader log events and native `DMDataProgresses` websocket observations |
 | Errors | Timestamped relevant log entries; distinguish previous startup errors and diagnostic probe errors |
 
-GUI port8080 is the current authenticated API. GUI port5050 may answer
-`CLI not ready`; this does not mean S001 stopped. Historical headless CLI/CSV
-commands and `sqx145-task1-start.txt` are not current GUI telemetry. If operating
-an explicitly verified headless deployment later, validate its actual CSV schema
-and response before extracting fields; do not mix modes.
+Verify the API and port for the active engine. A GUI installation may answer
+`CLI not ready` on the CLI port while its authenticated GUI observer reports
+progress. The shipped headless status reader parses labeled text lines from
+the CLI. A readiness timeout calls for [process and log checks](troubleshooting.md#recover-after-a-headless-start-times-out).
 
-The native websocket observer is `out/sqx-monitor/observe-native-streams.cjs`.
+Use the operator's configured websocket observer for downloader events.
 A quiet stream or no recent `Finished` log line does **not** establish queue 0.
 Likewise `Finished` and 100% counters mean processed, not necessarily successful.
 Validate persisted nonzero catalog histories/endpoints before closing data work.
@@ -93,20 +97,8 @@ sample duration and uncertainty whenever a conditional estimate is useful.
 
 ## Evidence and reporting contract
 
-Save under `out/sqx-monitor/` with unique `YYYYMMDD-HHMM` prefixes:
-`current.json`, `comparison.json`, `new-backup.json`, and failure/network evidence
-when applicable. Save `out/s001-data-repair/YYYYMMDD-HHMM-progress.json` even if
-its conclusion is current queue unknown and prior endpoint audit unchanged.
-
-A report contains timestamp, connectivity, engine/task identity, bank counts and
-deltas, candidate/retest totals and measured rates, retention/backup outcome,
-CPU/RAM/paging, relevant errors, data progress and ETA limitations. The latest
-user preference is to notify when Builder 2 completes or anything needs attention;
-retain routine evidence without repeatedly alerting on an unchanged known issue.
-
-The earlier operator policy requested keeping its hourly monitor active; this
-repository neither creates nor verifies that schedule. Consult its current owner
-before changing it. Do not mark the overall work complete
-at Builder 2 completion: the handoff lists final export, preservation, historical
-repair, data and isolated plugin acceptance gates. Schedule updates must retain
-all pending work and consumed-authorization boundaries.
+Store the timestamp, connectivity, engine/task identity, bank changes, retest
+totals, measured rates, backup checks, resource use and errors in the private
+run ledger. Record unknown data progress or ETA explicitly. Follow the current
+operator handoff for the reporting cadence and completion criteria, including
+final export and preservation checks.

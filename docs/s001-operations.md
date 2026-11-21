@@ -6,15 +6,16 @@ Applies to the preserving SQX 145 deployment on ERAZER. Use
 
 ## Current procedure and historical scope
 
-Read [the current handoff](s001-current-handoff.md), [monitoring](sqx-monitoring.md)
-and [preservation](s001-preservation.md) first. The sections below retain dated
-implementation and incident details. Launch/start/restart commands are historical
-recipes, **not commands to run against the current advancing GUI engine**.
-The October baseline configured caps were325/500/1000; its Builder1 had
-finished325. These are historical values, superseded by later operator-ledger
-updates, not current capacity/authorization claims. PID4216 and older headless
-processes below were superseded by the Oct31 recovery.
-Never replay a consumed one-time approval or a fresh-run launcher as resume.
+For an active run, read the operator's private handoff and identify its engine,
+project and unfinished task using [monitoring](sqx-monitoring.md#choose-the-monitor).
+Check saved banks and backups using [preservation](s001-preservation.md)
+before recovery. If a headless start was submitted and timed out, follow
+[timeout recovery](troubleshooting.md#recover-after-a-headless-start-times-out).
+
+The [published handoff](s001-current-handoff.md) and the incident records below
+describe October runs. Their task names, caps, process IDs and one-time recovery
+decisions belong to those runs. A fresh-run launcher can prepare new banks.
+Use the recovery procedure for the unfinished task in the verified run.
 
 ## Historical recovery record
 
@@ -69,7 +70,7 @@ Never start Builder 1 again. Never launch a replacement while PID12348 remains.
 
 
 
-### Current continuous-run recovery (2026-10-29)
+### October 29 continuous-run recovery
 
 Candidate telemetry is available through authenticated, read-only
 `GET /engine/loadVisualLog?projectName=S001_reproduce_project&type=global`.
@@ -148,17 +149,11 @@ engine, deployed files, or scheduled tasks.
 
 ## Historical headless launch procedure — not current GUI recovery
 
-Run Windows commands headlessly and silently. Long-lived engine work must use
-Task Scheduler, since an SSH session ending can terminate its child processes.
-After checking that SQX has exited and the existing launcher is appropriate for
-the intended run, use its on-demand task:
-
-```powershell
-Start-ScheduledTask -TaskName 'SQX-Task1-Headless'
-```
-
-Its existing `Start-SQX145-Task1.ps1` wrapper calls
-`C:\Users\Vic\ERAZER-Tools\SQX\Start-S001PreservingProject.ps1`.
+The October deployment used an on-demand scheduled task so the engine could
+outlive its SSH session. Its `Start-SQX145-Task1.ps1` wrapper called the
+preserving launcher. Inspect the deployed task action and its configuration
+before selecting a launcher for a new run. For the generic source entry
+points, see [deployment and compatibility](deployment-migration.md#compatibility-mapping).
 Do not substitute the generic project starter: direct GUI/API Start skips fresh
 bank and archive preparation. Do not start another engine alongside a GUI or
 CLI instance, force-kill SQX, or replace an active scheduled task.
@@ -213,6 +208,8 @@ task formats before use with another SQX version.
 ## Rebuild a reviewable bundle locally
 
 The builder requires the exact original 21-task archive used for the review.
+Supply that private input from a verified backup to run the example below.
+The repository's fixture tests run without it.
 It checks SHA-256 before applying original task-number mappings and refuses an
 existing output directory. It never reads or modifies the running project.
 

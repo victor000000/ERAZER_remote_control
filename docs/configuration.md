@@ -13,15 +13,18 @@ $config = .\scripts\Initialize-Toolkit.ps1
 $config.SchemaVersion
 ```
 
-This imports the module and reads data files; it does not contact a target or
-start applications. To choose private configuration explicitly:
+The loader imports the module and returns the merged configuration. Try an
+explicit overlay offline using the example data file included in the repository.
 
 ```powershell
-$config = .\scripts\Initialize-Toolkit.ps1 -ConfigPath .\config\defaults.psd1 -LocalConfigPath .\out\operator.local.psd1
+$config = .\scripts\Initialize-Toolkit.ps1 -ConfigPath .\config\defaults.psd1 -LocalConfigPath .\config\local.example.psd1
+$config.SchemaVersion
 ```
 
-Create the local file privately before using that example. It is not shipped.
-A file named `config/local.psd1` is ignored by Git but still **not auto-loaded**.
+The example also returns schema version `1`. For deployment, copy the example
+to a private path such as `out/operator.local.psd1`, edit it for the host and
+pass that file with `-LocalConfigPath`. The loader only reads an overlay when
+you supply its path.
 Relative paths resolve against the calling process's working directory.
 
 Nested hashtables merge recursively; scalar values and arrays replace the base.
@@ -45,15 +48,15 @@ Selected API-origin/project syntax is checked, not full host readiness.
 | `Sqx.GuiTaskName` | Defaults to `StartTradingAppsAtLogon`; generic GUI control starts the existing reviewed task |
 | `Sqx.LogDirectory` | Native stdout/stderr destination; must be writable on the operation host |
 | `Proxy.Servers` | Case-sensitive SSID map; empty endpoint disables that network's proxy; `<gateway>` is substituted only with a valid IPv4 gateway |
-| `Proxy.FailureThreshold` | `3`; consecutive failed probes for the same endpoint before Disable |
-| `Proxy.UnknownThreshold` | `3`; missing-observation threshold; policy functions accept thresholds 1–99 |
+| `Proxy.FailureThreshold` | Default `3`. Use 1–99 consecutive failed probes for the same endpoint before Disable. |
+| `Proxy.UnknownThreshold` | Default `3`. Use 1–99 missing observations before Disable. |
 | `Proxy.Mt5Directory` | Selected MT5 installation; only used for explicit MT5 proxy update |
 | `Controller.ExpectedTasks` | Source autostart expectations; currently contains legacy OMR task names and requires reconciliation with the Mihomo owner before restoration |
 | `Controller.MihomoRegistrar` | Controller-local registrar path; not downloaded or deployed by this project |
 
-The loader only checks positive thresholds; the policy's stricter bounds may
-reject a larger value when used. Do not treat accepted config as a complete
-schema/semantic certification. Unknown task states always require inspection.
+The loader checks that both thresholds are positive. A value of `100` can load
+successfully and then fail parameter validation in the watcher. Test a private
+overlay with `-DryRun -SimulateSsid 'unconfigured-example'` before enabling a watcher.
 
 ## Script-specific configuration
 

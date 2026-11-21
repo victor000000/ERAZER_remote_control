@@ -1,15 +1,16 @@
 # ERAZER Remote Control
 
-Operate **ERAZER-6JMHAKCD** from **STUPICVICPC** using pinned-key SSH, RustDesk,
-StrategyQuant X 145 and Mouse Without Borders. Start with the
-[documentation index](docs/README.md).
+This Windows toolkit operates a separate StrategyQuant X host from a controller.
+It provides PowerShell commands for inspecting SQX, managing scheduled tasks
+and applying network-specific proxy settings. Start with the
+[offline setup](#local-environment-no-docker-required) or the [runbooks](docs/README.md).
 
 ## Common work
 
 | Need | Runbook |
 | --- | --- |
 | Connect or recover access | [Connections and proxy](docs/gateway-compatibility.md) |
-| Continue S001 safely | [Current handoff](docs/s001-current-handoff.md) and [operations history](docs/s001-operations.md) |
+| Continue S001 safely | [Identify the active engine](docs/sqx-monitoring.md#choose-the-monitor), then consult the operator's current handoff and [recovery procedure](docs/troubleshooting.md#recover-after-a-headless-start-times-out) |
 | Back up new strategies or repair historical files | [Preservation](docs/s001-preservation.md) |
 | Report generation, historical-data progress and ETA | [SQX monitoring](docs/sqx-monitoring.md) |
 | Repair shared mouse/keyboard and automatic reconnect | [Mouse Without Borders](docs/mouse-without-borders.md) |
@@ -40,56 +41,39 @@ health, addresses and S001 state before operational changes.
 
 ## Obtain the source
 
-Use Git on Windows to clone this repository, then open its root in PowerShell.
-PowerShell 7 is required for the supplied wrappers/test bootstrap; Windows
-PowerShell 5.1 is also verified. Python 3 is needed for the documentation gate
-and standalone helpers, with no pip dependencies.
+Clone the publication repository with Git and run the examples from its root.
 
 ```powershell
 git clone https://github.com/victor000000/ERAZER_remote_control.git
 Set-Location ERAZER_remote_control
 ```
 
-A source clone does not install SQX, RustDesk, MWB, SSH identities or tasks. Use
-the offline configuration-load example below before preparing private access.
-
-## First read-only check
-
-From the Windows controller, with the existing SSH identity configured:
-
-```powershell
-ssh erazer-hotspot hostname
-```
-
-A fresh checkout does not include private SSH keys, host overlays or ignored
-monitoring helpers. For an offline first step, use the configuration-load example
-below. For actual remote access follow the [connection runbook](docs/gateway-compatibility.md).
-SQX status commands run on the SQX host; loopback on the controller is not the
-target. CLI and authenticated GUI monitoring are separate interfaces.
-
 ## Configuration and deployment
 
 ### Local environment (no Docker required)
 
-Run this toolkit directly on Windows. Docker Desktop, containers and Docker
-Compose are not project dependencies; there is no container environment to
-start or migrate. Windows PowerShell 5.1 is the operational runtime, and
-PowerShell 7 is also used for development and verification. Windows APIs,
-Task Scheduler and installed applications are accessed on their Windows host.
-
-From a Windows PowerShell session at the repository root, load the module and
-read the default configuration without deploying or starting applications:
+The module runs on Windows PowerShell 5.1 and PowerShell 7. From either shell,
+load the shipped defaults and simulate a network outside the configured proxy map.
 
 ```powershell
-.\scripts\Initialize-Toolkit.ps1
+$config = .\scripts\Initialize-Toolkit.ps1
+$config.SchemaVersion
+(.\scripts\network\Sync-ProxyWithNetwork.ps1 -DryRun -SimulateSsid 'unconfigured-example').Action
 ```
 
-For development, follow [Testing](docs/testing.md) to save the pinned test
-dependencies locally and run the offline checks. The standalone Python helpers
-use Python 3 and its standard library; they require no pip packages. WSL is
-optional for controller-side file work and Python helpers. Run Windows-specific
-operations and acceptance checks with Windows PowerShell on the intended host.
-GitHub CI likewise uses Windows runners directly.
+Expected output is `1` followed by `Disable`. The simulation reads configuration
+and returns a decision. You can run it offline in a fresh clone.
+
+For the test matrix, put Git and Python 3 on the test process's PATH and install
+both PowerShell editions. The initial dependency download uses PowerShell 7,
+PowerShellGet and an existing NuGet provider. See [testing and CI](docs/testing.md).
+The SQX command wrappers also use `pwsh.exe`. Their installation paths and
+fixed arguments are documented in [deployment and compatibility](docs/deployment-migration.md#compatibility-mapping).
+
+For live access, provision the controller's Windows OpenSSH client, private
+identity and pinned host-key record separately. Verify the target through the
+[connection runbook](docs/gateway-compatibility.md). Run SQX status commands on
+the verified target with the matching install, project and API configuration.
 
 See [Docker cleanup](docs/docker-cleanup.md) for the boundary between this
 project's native environment and Docker data owned by other local projects.
@@ -113,7 +97,9 @@ edit a live `.cfx`, or reinstall controller Tailscale as a fallback.
 
 ## Releases and documentation scope
 
-[Release 1.0.2](docs/releases/1.0.2.md) describes the status parser fix and validation. [Release 1.0.1](docs/releases/1.0.1.md) records the task-state safeguards.
+[Release 1.0.2](docs/releases/1.0.2.md) covers CLI readiness and the
+[source publication procedure](docs/releases/1.0.2.md#verify-and-publish).
+[Release 1.0.1](docs/releases/1.0.1.md) records the task-state safeguards.
 The [documentation audit](docs/documentation-audit.md) inventories published
 and native-only records, validation scope and remaining limits. Published docs
 are not a substitute for the current authorized operator ledger. There is no

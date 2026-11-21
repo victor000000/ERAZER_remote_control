@@ -1,9 +1,9 @@
 # Documentation index
 
-Use the runbook for the operation rather than a historical log or an old chat.
-For active S001 work, start with [the current handoff](s001-current-handoff.md),
-then monitoring and preservation. Documentation reviewed November 7, 2026
-against module 1.0.1. See [release 1.0.2](releases/1.0.2.md) for the current status parsing behavior. Recheck dated observations before live actions.
+For active S001 work, obtain the operator's private handoff, identify the
+engine, and use the matching [monitor](sqx-monitoring.md#choose-the-monitor)
+and [preservation procedure](s001-preservation.md). For a source release, follow
+the [verification and publication steps](releases/1.0.2.md#verify-and-publish).
 All recorded times are Asia/Shanghai unless explicitly stated otherwise.
 
 | Document | Owns |
@@ -14,7 +14,7 @@ All recorded times are Asia/Shanghai unless explicitly stated otherwise.
 | [Troubleshooting](troubleshooting.md) | Symptom-to-evidence decisions and recovery boundaries |
 | [Documentation audit](documentation-audit.md) | Owned-doc inventory, publication/native reconciliation and check exclusions |
 | [Connections and proxy](gateway-compatibility.md) | Known routes, host identity, discovery, proxy boundaries |
-| [Current S001 handoff](s001-current-handoff.md) | Dated state, authorization boundaries, recovery decisions and completion gates |
+| [Historical S001 handoff](s001-current-handoff.md) | Published October baseline and the recovery decisions made for that run |
 | [Strategy preservation](s001-preservation.md) | Receipt chain, SHA256 verification, historical6610 repair and rollback |
 | [S001 operations](s001-operations.md) | Preserving launcher, bank routing, archive gates, recovery |
 | [SQX monitoring](sqx-monitoring.md) | Live checks, historical-data log parsing, snapshots, ETA/report rules |
@@ -34,8 +34,8 @@ All recorded times are Asia/Shanghai unless explicitly stated otherwise.
 - Give each operating fact one main runbook; link to it elsewhere.
 - Separate deployed behavior, source defaults and proposed changes. A successful
   source check does not establish a live deployment or current health.
-- Keep per-check counts, logs, inventories and generated migration tables in
-  ignored `out/`. Link evidence from a durable runbook without copying every row.
+- Keep per-check counts, logs, inventories and receipts in the private
+  operator workspace. Describe the verification procedure in the public runbook.
 - Date route observations and retain verification limits. A timeout means an
   access failure, not proof that SQX stopped. Old PIDs/counts are historical.
 - Preserve original history and user changes. Label superseded reviews and link

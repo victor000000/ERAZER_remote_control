@@ -26,11 +26,11 @@ Do not assume ERAZER still owns `192.168.1.198`. Read MiFi's current device
 record using `scripts/remote/Inspect-ERAZERNetwork.py`, or let `Connect-ERAZER.ps1`
 do this automatically. An `NA` router address does not establish that the PC is off.
 
-For unknown DHCP addresses, run the maintained controller-side helper:
-
-```powershell
-powershell.exe -NoProfile -File .\Connect-ERAZER.ps1 -ForceScan hostname
-```
+The [controller connector](../Connect-ERAZER.ps1) can verify the configured
+target when its DHCP address changes. Its `-ResolveOnly` option contacts the
+target and returns the verified address. Run it in a headless Windows
+PowerShell process with the operator's private SSH configuration. For a fresh
+checkout, use the [offline setup](../README.md#local-environment-no-docker-required).
 
 It first checks HypoMux, then MiFi-1A8F's native device table for ERAZER's MAC
 `54:ae:bc:bf:6c:37`, then scans directly attached /24 candidates with bounded
@@ -43,7 +43,7 @@ hidden, noninteractive PowerShell over hotspot SSH. It is local ignored state,
 not a deployed source entry point. It now delegates to maintained
 `scripts/remote/erazer_transport.py`, which resolves and pins the target before
 executing the supplied command once. A command timeout never triggers automatic
-re-execution. `-ResolveOnly` on the controller helper emits the verified address.
+re-execution.
 
 A timeout alone does not mean the PC or SQX stopped. Check the other known LAN
 route and controller addressing read-only. Do not switch Wi-Fi, reinstall

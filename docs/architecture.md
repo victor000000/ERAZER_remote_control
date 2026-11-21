@@ -1,8 +1,8 @@
 # Implemented design
 
-This describes published module **1.0.1**, not the current state of a remote PC.
-The toolkit runs natively on Windows. It controls an installed SQX application;
-it is not a market-data provider, trading engine or strategy-quality validator.
+The toolkit runs natively on Windows and controls an installed SQX application.
+The [module manifest](../src/ERAZER.RemoteControl/ERAZER.RemoteControl.psd1)
+defines the package version, minimum PowerShell version and exported functions.
 
 ## Components and boundaries
 
@@ -36,9 +36,9 @@ or public authentication service is provided by this repository.
 
 ## State and failure handling
 
-Configuration schema version 1 is independent of module version 1.0.1. A base
-PowerShell data file is loaded first; only an explicitly supplied local overlay
-is recursively merged. Arrays replace earlier arrays. The module validates core
+The configuration schema is version 1. The loader reads the base PowerShell
+data file and recursively merges an explicitly supplied local overlay.
+Arrays replace earlier arrays. The module validates core
 sections and selected values; it does not validate that paths, routes, licenses,
 users or installed applications exist. See [configuration](configuration.md).
 

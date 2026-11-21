@@ -11,9 +11,9 @@ Source edits and local staging still do not migrate a running deployment.
 Existing `SQX`/`Proxy` task actions may point to self-contained deployed helpers.
 Inspect them before activation and preserve rollback copies.
 
-**The generic task action is not the preserving S001 action.** Do not register
-`Start-SqxEngine.ps1` over `SQX-Task1-Headless` to resolve a mismatch in a generic
-starter. The current S001 run uses its reviewed preservation launcher.
+Inspect the task that owns the run and compare its action with the operator's
+current configuration. A preserving S001 task has its own launcher and recovery
+procedure. Generic task registration protects the reserved `SQX-Task1-Headless` name.
 
 `config/deployment.psd1` is an explicit file list: it includes the S001 helpers,
 but currently excludes the standalone MWB helper and migration-audit scanner.
@@ -44,11 +44,14 @@ Review [`../config/deployment.psd1`](../config/deployment.psd1), then preview
 with a new, explicit absolute local destination:
 
 ```powershell
-pwsh -NoProfile -File .\scripts\Deploy-Toolkit.ps1 -DestinationPath C:\ToolkitStaging\ERAZER -WhatIf
+$destination = Join-Path ([IO.Path]::GetTempPath()) ('ERAZER-stage-' + [guid]::NewGuid())
+.\scripts\Deploy-Toolkit.ps1 -DestinationPath $destination -WhatIf
 ```
 
-After reviewing the destination, manifest and proposed changes, an operator can
-run the same command without `-WhatIf` to stage the maintained bundle locally.
+For an approved noninteractive local stage, use the reviewed destination,
+omit `-WhatIf` and pass `-Confirm:$false`. The script verifies the copied files
+by hash. Inspect the returned `Destination`, `Files` and `Backup` fields.
+`Backup` identifies the previous managed bundle when one was replaced.
 Use `-Force` only for an existing toolkit-marked bundle: staging refuses to
 replace an unmanaged directory and retains a uniquely named backup of the old
 managed bundle. Staging does not SSH, upload to ERAZER, register tasks or activate the

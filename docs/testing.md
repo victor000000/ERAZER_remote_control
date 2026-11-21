@@ -2,23 +2,59 @@
 
 ## Reproduce the checks
 
-Use the native Windows environment described in the
-[local setup](../README.md#local-environment-no-docker-required). Docker is not
-required for development, tests or CI. Run from the repository root on Windows:
+Work from the root of a Git checkout. The checks use `git ls-files` to select
+repository sources. The Windows test process needs Git on its own PATH.
+See [local setup](../README.md#local-environment-no-docker-required).
 
-```powershell
-python .\build\check_docs.py
-python -m unittest discover -s tests -p test_documentation.py
-pwsh -NoProfile -File .\build\Check-DocumentationCommands.ps1
-pwsh -NoProfile -File .\build\Install-TestDependencies.ps1
-pwsh -NoProfile -File .\build\Invoke-Checks.ps1
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build\Invoke-Checks.ps1
+### Source and documentation
+
+In WSL the following commands compile the tracked Python files in memory, check
+local Markdown links and run the documentation regression tests. On Windows
+the workflow passes the same Python compiler loop to `python -` using a
+PowerShell here-string. [Workflow](../.github/workflows/ci.yml)
+
+```bash
+(
+set -e
+python3 - <<'PY'
+from pathlib import Path
+from subprocess import check_output
+
+names = check_output(["git", "ls-files", "-z", "--", "*.py"]).decode().split("\0")
+for name in filter(None, names):
+    compile(Path(name).read_bytes(), name, "exec")
+PY
+python3 -B build/check_docs.py
+python3 -B -m unittest discover -s tests -p test_documentation.py -v
+)
 ```
 
-The explicit bootstrap downloads Pester 5.7.1 and PSScriptAnalyzer 1.24.0 from
-PowerShell Gallery into ignored `out/dependencies/`. It does not install modules
-in user/system directories or change repository trust. The check command itself
-is offline and fails clearly if the pinned dependencies are absent.
+In a Windows PowerShell process at the checkout root, run the parameter check
+below. It reads the scripts' syntax trees. These documentation checks work
+offline without Pester or PSScriptAnalyzer.
+
+```powershell
+.\build\Check-DocumentationCommands.ps1
+```
+
+### Windows unit and integration tests
+
+For the first download, PowerShell 7 needs `Save-Module` from PowerShellGet,
+an existing NuGet provider and access to PowerShell Gallery. The bootstrap
+saves Pester 5.7.1 and PSScriptAnalyzer 1.24.0 in `out/dependencies/`. With
+those versions cached, the check script runs offline under either edition.
+
+| Step | Windows executable | Arguments from the checkout root |
+| --- | --- | --- |
+| Bootstrap dependencies | `pwsh.exe` | `-NoProfile -NonInteractive -File .\build\Install-TestDependencies.ps1` |
+| Windows PowerShell 5.1 | `powershell.exe` | `-NoProfile -NonInteractive -ExecutionPolicy Bypass -File .\build\Invoke-Checks.ps1` |
+| PowerShell 7 | `pwsh.exe` | `-NoProfile -NonInteractive -File .\build\Invoke-Checks.ps1` |
+
+For unattended execution, configure a Windows process launcher with
+`UseShellExecute = false` and `CreateNoWindow = true`. Give the Windows child
+Windows-form paths, including when the caller is in WSL. Capture stdout and stderr and use
+the PowerShell child's exit code after it finishes. A terminal wrapper can
+return success even when that child fails.
 
 ## What is checked
 
@@ -48,17 +84,19 @@ is offline and fails clearly if the pinned dependencies are absent.
 - Module command coverage must be **at least 90%**. Coverage of mocked command
   paths is not evidence that the corresponding Windows/native operation works.
 
-NUnit, JaCoCo coverage and parse/lint diagnostics are written separately under
-`out/test-results/pwsh/` and `out/test-results/powershell/`.
+Each shell writes `tests.nunit.xml`, `coverage.xml`, `parse-errors.txt` and
+`script-analyzer.txt` under its own `out/test-results/pwsh/` or
+`out/test-results/powershell/` directory. An empty diagnostics file indicates
+zero findings for that check.
 
 ## CI boundary
 
-[The workflow](../.github/workflows/ci.yml) runs a Windows matrix with PowerShell
-7 and Windows PowerShell 5.1, read-only repository permissions, timeouts and
-artifact retention. It needs no production credentials, installed SQX, SSH,
-RustDesk session, elevated token or ERAZER connection. It never executes the
-historical cleanup/repair scripts. The workflow starts after this source is
-pushed to a GitHub repository; local passing results are not a GitHub run.
+Pushes, pull requests and manual dispatch run both `windows-latest` matrix jobs
+with read-only repository permissions. Each job runs the Python and documentation
+gates and bootstraps dependencies with `pwsh` before running Pester in its
+selected shell. The upload step collects that shell's diagnostics, including
+on a failed job, with a 14-day retention period. Inspect `test-results-powershell`
+and `test-results-pwsh` on the run for the published commit. [Workflow](../.github/workflows/ci.yml)
 
 ## Scope of recorded results
 
@@ -103,11 +141,10 @@ cannot resolve `git` despite a valid PATH, verify that its `PATHEXT` includes
 
 ## Documentation checks and exclusions
 
-The first three commands above need no downloaded PowerShell test modules.
-Use `python3` for the Python commands in WSL; run the AST command with a native
-Windows PowerShell executable. The examples in the command guide that load
-configuration or simulate a proxy decision are offline; remote checks and
-install/repair examples are reviewed statically, not exercised.
+To exercise examples offline, run the [setup simulation](../README.md#local-environment-no-docker-required)
+and [status parser example](releases/1.0.2.md#check-a-status-reply-offline).
+Review live SSH, task, GUI and repair commands against their source signatures
+and prerequisites during a documentation pass.
 
 The Markdown checker includes tracked and nonignored new Markdown in its source
 checkout. Four frozen snapshots under docs/history retain old-layout links and
